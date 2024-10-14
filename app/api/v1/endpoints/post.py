@@ -11,8 +11,6 @@ from app.db.session import get_db
 
 router = APIRouter()
 
-
-
 @router.get("/posts/", response_model=List[PostResponse | Post])
 async def read_posts(filter_query: Annotated[PostFilterParams, Query()], db: Session = Depends(get_db)):
     filters = dict(filter_query.__dict__.items())
@@ -25,6 +23,8 @@ async def read_posts(filter_query: Annotated[PostFilterParams, Query()], db: Ses
 @router.get("/posts/{post_id}", response_model=Union[PostResponse, Post])
 def read_post(post_id: int, include: Union[str, None] = None, db: Session = Depends(get_db)):
     db_post = crud_post.get_post(db, post_id=post_id)
+    if not db_post:
+        raise HTTPException(status_code=404, detail= "Post not found")
     if include:
         # return db_post
         return PostResponse.include_relations(db_post, include)
@@ -37,6 +37,8 @@ def create_post(post: PostCreate, db: Session = Depends(get_db)):
 @router.post("/posts/{post_id}/comments", response_model=CommentCreate)
 def create_post_comment(post_id: int, comment: CommentCreate, db: Session = Depends(get_db)):
     db_post = crud_post.get_post(db, post_id=post_id)
+    if not db_post:
+        raise HTTPException(status_code=404, detail= "Post not found")
     if db_post and comment:
         return crud_comment.create_comment(db, comment)
     return None
@@ -52,6 +54,9 @@ def add_post_tags(post_id: int, tags_in: PostTags, db: Session = Depends(get_db)
             new_tag = crud_tag.create_tag(db, TagCreate(name=tag_name))
             if new_tag:
                 tags_to_add.append(new_tag.id)
-    db_post = crud_post.add_post_tags(db, post_id, tags_to_add)
+    try:
+        db_post = crud_post.add_post_tags(db, post_id, tags_to_add)
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
     return PostResponse.include_relations(db_post, "tags")
    
