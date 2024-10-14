@@ -9,14 +9,8 @@ from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import relationship
 from app.db.session import Base
 
-# class Base(DeclarativeBase):
-#     pass
-
 
 class User(Base):
-    # def __init__(self, username, email):
-    #     self.username = username
-    #     self.email = email
 
     __tablename__ = "user"
 
