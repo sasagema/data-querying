@@ -1,18 +1,11 @@
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI
+from app.db.session import engine
+from app.api.v1.api import api_router
+from app.db.session import Base, SessionLocal
+
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
-
-@app.get("/posts/")
-def read_posts():
-    return "read posts"
-@app.post("/posts/")
-def create_post():
-    return "create post"
-@app.put("/posts/{post_id}")
-def update_post():
-    return "update post"
-@app.delete("/posts/{post_id}")
-def delete_posts():
-    return "delete post"
+app.include_router(api_router, prefix="/api")
 
