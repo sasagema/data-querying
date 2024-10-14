@@ -25,10 +25,11 @@ Install requirements
 pip install -r requirements.txt
 ```
 
+
 To run fastapi API local server
 
 ```bash
-  uvicorn app.main:app --reload  
+  uvicorn app.main:app --reload --port=8000 --host=0.0.0.0
 ```
 - API will be availiable on http://localhost:8000/
 - API Documentation: http://localhost:8000/docs
