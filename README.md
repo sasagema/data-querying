@@ -24,7 +24,15 @@ Install requirements
 ```bash
 pip install -r requirements.txt
 ```
+## Environment variables:
 
+-  Create a .env file in the project root
+```bash
+DATABASE_URL=""
+```
+Database URL Example: sqlite:///blog.db
+
+## Run Application
 
 To run fastapi API local server
 
